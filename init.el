@@ -1,5 +1,36 @@
-(add-to-list 'load-path "~/.config/emacs/plugins/neotree/")
-(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+;; Packages
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(package-initialize)
+(package-refresh-contents)
+
+(require 'use-package)
+
+(use-package monokai-theme
+  :ensure t
+  :config
+  (load-theme 'monokai t))
+
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-theme 'nerd
+        neo-window-fixed-size nil
+        neo-smart-open t
+        neo-autorefresh t)
+  :bind
+  (("C-t" . neotree-toggle)))
+
+;; whitespace
+(use-package whitespace
+  :ensure t
+  :config
+  (global-whitespace-mode 1)
+  (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
+                                    (tab-mark     ?\t     [?\xBB ?\t])
+                                    (newline-mark ?\n     [?¬ ?\n]))))
 
 ;; Hooks
 (setq window-setup-hook '(lambda ()
@@ -17,8 +48,6 @@
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
 
-(load-theme 'monokai t)
-
 ;; Basic keybinds
 (global-set-key (kbd "C-i") 'next-buffer)
 (global-set-key (kbd "M-]") 'enlarge-window-horizontally)
@@ -32,18 +61,3 @@
 (defun vsplit ()
   (interactive)
   (split-window-vertically))
-
-;; neotree
-(require 'neotree)
-(setq neo-theme 'nerd
-      neo-window-fixed-size nil
-      neo-smart-open t
-      neo-autorefresh t)
-(global-set-key (kbd "C-t") 'neotree-toggle)
-
-;; whitespace
-(require 'whitespace)
-(global-whitespace-mode 1)
-(setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
-                                    (tab-mark     ?\t     [?\xBB ?\t])
-                                    (newline-mark ?\n     [?¬ ?\n])))
