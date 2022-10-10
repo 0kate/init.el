@@ -34,7 +34,7 @@
 
 ;; Hooks
 (setq window-setup-hook '(lambda ()
-                           (set-background-color "ARGBBB000000")))
+                           (set-face-background 'default "undefined")))
 
 ;; Basic options
 (setq make-backup-files nil)
