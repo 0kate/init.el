@@ -32,6 +32,10 @@
                                     (tab-mark     ?\t     [?\xBB ?\t])
                                     (newline-mark ?\n     [?¬ ?\n]))))
 
+;; magit
+(use-package magit
+  :ensure t)
+
 ;; Hooks
 (setq window-setup-hook '(lambda ()
                            (set-face-background 'default "undefined")))
@@ -61,3 +65,15 @@
 (defun vsplit ()
   (interactive)
   (split-window-vertically))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(magit use-package neotree monokai-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
