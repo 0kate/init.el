@@ -46,6 +46,8 @@
       scroll-margin 99999
       scroll-step 1)
 (setq-default indent-tabs-mode nil)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
