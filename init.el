@@ -36,6 +36,14 @@
 (use-package magit
   :ensure t)
 
+(use-package company
+  :ensure
+  :config
+  (global-company-mode t)
+  (setq company-backends '((company-capf company-dabbrev-code))
+        company-minimum-prefix-length 1
+        company-idle-delay 0.0))
+
 (use-package lsp-mode
   :ensure t
   :init
@@ -46,8 +54,9 @@
   :commands lsp)
 
 ;; Hooks
-(setq window-setup-hook '(lambda ()
-                           (set-face-background 'default "undefined")))
+(add-hook 'window-setup-hook '(lambda ()
+                                (set-face-background 'default "undefined")))
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;; Basic options
 (setq make-backup-files nil)
@@ -65,7 +74,7 @@
   (global-display-line-numbers-mode))
 
 ;; Basic keybinds
-(global-set-key (kbd "C-i") 'next-buffer)
+;; (global-set-key (kbd "C-i") 'next-buffer)
 (global-set-key (kbd "M-]") 'enlarge-window-horizontally)
 (global-set-key (kbd "M-[") 'shrink-window-horizontally)
 
