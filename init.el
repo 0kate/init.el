@@ -13,6 +13,11 @@
   :config
   (load-theme 'monokai t))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package neotree
   :ensure t
   :config
@@ -44,12 +49,16 @@
         company-minimum-prefix-length 1
         company-idle-delay 0.0))
 
+(use-package rust-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
   :init
   (setq lsp-keymap-prefix "C-c l")
   :hook
-  ((ruby-mode . lsp))
+  ((ruby-mode . lsp)
+   (rust-mode . lsp))
   ;; (lsp-mode . lsp-enable-which-key-integration)
   :commands lsp)
 
@@ -94,3 +103,16 @@
         (append
          (split-string-and-unquote path ":")
          exec-path)))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(use-package neotree mozc monokai-theme magit lsp-mode company color-theme-sanityinc-tomorrow)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
