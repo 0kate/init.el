@@ -96,6 +96,24 @@
   (interactive)
   (split-window-vertically))
 
+(setq clipboard-cli "xclip"
+      cut-command clipboard-cli
+      paste-command (concat clipboard-cli " -o"))
+
+(defun cut-with-window-system (text &optional rest)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process cut-command "*Messages*" cut-command)))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
+(defun paste-with-window-system ()
+  (shell-command-to-string paste-command))
+
+(when (and (not window-system)
+           (executable-find clipboard-cli))
+  (setq interprogram-cut-function 'cut-with-window-system)
+  (setq interprogram-paste-function 'paste-with-window-system))
+
 ;; asdf enable
 (let ((path (substitute-env-vars (concat "$HOME/.asdf" "/shims:" "$HOME/.asdf" "/bin:$PATH"))))
   (setenv "PATH" path)
