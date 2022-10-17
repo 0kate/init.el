@@ -12,7 +12,7 @@
   :ensure t
   :config
   (load-theme 'monokai t))
-
+;;
 (use-package exec-path-from-shell
   :ensure t
   :config
@@ -32,9 +32,17 @@
   :ensure t
   :config
   (global-whitespace-mode 1)
+  (setq whitespace-line nil)
   (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
                                     (tab-mark     ?\t     [?\xBB ?\t])
                                     (newline-mark ?\n     [?¬ ?\n]))))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :config
+  (setq highlight-indent-guides-method 'character)
+  :hook
+  ((prog-mode . highlight-indent-guides-mode)))
 
 ;; magit
 (use-package magit
