@@ -12,7 +12,7 @@
   :ensure t
   :config
   (load-theme 'monokai t))
-;;
+
 (use-package exec-path-from-shell
   :ensure t
   :config
@@ -28,7 +28,6 @@
   :bind
   (("C-t" . neotree-toggle)))
 
-;; whitespace
 (use-package whitespace
   :ensure t
   :config
@@ -50,7 +49,6 @@
   :hook
   ((prog-mode . rainbow-delimiters-mode)))
 
-;; magit
 (use-package magit
   :ensure t)
 
