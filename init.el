@@ -105,14 +105,6 @@
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
 
-;; Coding system
-;; (prefer-coding-system)
-;; (set-default-coding-systems 'utf-8)
-;; (set-language-environment 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
-;; (setq-default buffer-file-coding-system 'utf-8)
-
 ;; Basic keybinds
 ;; (global-set-key (kbd "C-i") 'next-buffer)
 (global-set-key (kbd "M-]") 'enlarge-window-horizontally)
