@@ -35,8 +35,8 @@
   (global-whitespace-mode 1)
   (setq whitespace-line nil)
   (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
-                                    (tab-mark     ?\t     [?\xBB ?\t])
-                                    (newline-mark ?\n     [?¬ ?\n]))))
+                                      (tab-mark     ?\t     [?\xBB ?\t])
+                                      (newline-mark ?\n     [?¬ ?\n]))))
 
 (use-package highlight-indent-guides
   :ensure t
