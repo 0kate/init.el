@@ -13,6 +13,11 @@
   :config
   (load-theme 'monokai t))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package neotree
   :ensure t
   :config
@@ -43,12 +48,16 @@
         company-minimum-prefix-length 1
         company-idle-delay 0.0))
 
+(use-package rust-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
   :init
   (setq lsp-keymap-prefix "C-c l")
   :hook
-  ((ruby-mode . lsp))
+  ((ruby-mode . lsp)
+   (rust-mode . lsp))
   ;; (lsp-mode . lsp-enable-which-key-integration)
   :commands lsp)
 
@@ -86,6 +95,24 @@
   (interactive)
   (split-window-vertically))
 
+(setq clipboard-cli "xclip"
+      cut-command clipboard-cli
+      paste-command (concat clipboard-cli " -o"))
+
+(defun cut-with-window-system (text &optional rest)
+  (let ((process-connection-type nil))
+    (let ((proc (start-process cut-command "*Messages*" cut-command)))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
+(defun paste-with-window-system ()
+  (shell-command-to-string paste-command))
+
+(when (and (not window-system)
+           (executable-find clipboard-cli))
+  (setq interprogram-cut-function 'cut-with-window-system)
+  (setq interprogram-paste-function 'paste-with-window-system))
+
 ;; asdf enable
 (let ((path (substitute-env-vars (concat "$HOME/.asdf" "/shims:" "$HOME/.asdf" "/bin:$PATH"))))
   (setenv "PATH" path)
@@ -93,60 +120,13 @@
         (append
          (split-string-and-unquote path ":")
          exec-path)))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   (vector "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#8abeb7" "#c5c8c6"))
- '(beacon-color "#cc6666")
- '(compilation-message-face 'default)
- '(custom-enabled-themes '(sanityinc-tomorrow-bright))
- '(custom-safe-themes
-   '("78e6be576f4a526d212d5f9a8798e5706990216e9be10174e3f3b015b8662e27" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
- '(fci-rule-color "#373b41")
- '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
- '(frame-background-mode 'dark)
- '(highlight-changes-colors '("#FD5FF0" "#AE81FF"))
- '(highlight-tail-colors
-   '(("#3C3D37" . 0)
-     ("#679A01" . 20)
-     ("#4BBEAE" . 30)
-     ("#1DB4D0" . 50)
-     ("#9A8F21" . 60)
-     ("#A75B00" . 70)
-     ("#F309DF" . 85)
-     ("#3C3D37" . 100)))
- '(magit-diff-use-overlays nil)
- '(package-selected-packages '(magit use-package neotree monokai-theme))
- '(pos-tip-background-color "#FFFACE")
- '(pos-tip-foreground-color "#272822")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   '((20 . "#cc6666")
-     (40 . "#de935f")
-     (60 . "#f0c674")
-     (80 . "#b5bd68")
-     (100 . "#8abeb7")
-     (120 . "#81a2be")
-     (140 . "#b294bb")
-     (160 . "#cc6666")
-     (180 . "#de935f")
-     (200 . "#f0c674")
-     (220 . "#b5bd68")
-     (240 . "#8abeb7")
-     (260 . "#81a2be")
-     (280 . "#b294bb")
-     (300 . "#cc6666")
-     (320 . "#de935f")
-     (340 . "#f0c674")
-     (360 . "#b5bd68")))
- '(vc-annotate-very-old-color nil)
- '(weechat-color-list
-   '(unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
- '(window-divider-mode nil))
+ '(package-selected-packages
+   '(use-package neotree mozc monokai-theme magit lsp-mode company color-theme-sanityinc-tomorrow)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
