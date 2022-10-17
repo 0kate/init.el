@@ -18,7 +18,6 @@
   :config
   (setq neo-theme 'nerd
         neo-window-fixed-size nil
-        neo-smart-open t
         neo-autorefresh t)
   :bind
   (("C-t" . neotree-toggle)))
