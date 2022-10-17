@@ -49,6 +49,11 @@
 (use-package magit
   :ensure t)
 
+(use-package git-gutter
+  :ensure t
+  :hook
+  ((prog-mode . git-gutter-mode)))
+
 (use-package company
   :ensure
   :config
