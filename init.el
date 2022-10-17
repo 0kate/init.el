@@ -105,6 +105,7 @@
 
 ;; Basic keybinds
 ;; (global-set-key (kbd "C-i") 'next-buffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "M-]") 'enlarge-window-horizontally)
 (global-set-key (kbd "M-[") 'shrink-window-horizontally)
 
