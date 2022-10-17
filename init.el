@@ -45,6 +45,11 @@
   :hook
   ((prog-mode . highlight-indent-guides-mode)))
 
+(use-package rainbow-delimiters
+  :ensure t
+  :hook
+  ((prog-mode . rainbow-delimiters-mode)))
+
 ;; magit
 (use-package magit
   :ensure t)
@@ -52,7 +57,9 @@
 (use-package git-gutter
   :ensure t
   :hook
-  ((prog-mode . git-gutter-mode)))
+  ((prog-mode . git-gutter-mode))
+  :custom
+  (git-gutter:modified-sign "~"))
 
 (use-package company
   :ensure
@@ -79,21 +86,32 @@
 (add-hook 'window-setup-hook '(lambda ()
                                 (set-face-background 'default "undefined")))
 (add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'eshell-mode-hook '(lambda ()
+                               (display-line-numbers-mode -1)))
 
 ;; Basic options
-(setq make-backup-files nil)
 (setq maximum-scroll-margin 0.5
       scroll-margin 99999
       scroll-step 1)
 (setq-default indent-tabs-mode nil)
-(setq make-backup-files nil)
-(setq auto-save-default nil)
+(setq make-backup-files nil
+      auto-save-default nil
+      create-lockfiles nil)
+(electric-pair-mode 1)
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
+
+;; Coding system
+;; (prefer-coding-system)
+;; (set-default-coding-systems 'utf-8)
+;; (set-language-environment 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (setq-default buffer-file-coding-system 'utf-8)
 
 ;; Basic keybinds
 ;; (global-set-key (kbd "C-i") 'next-buffer)
