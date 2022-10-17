@@ -16,6 +16,7 @@
 (use-package exec-path-from-shell
   :ensure t
   :config
+  (exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
   (exec-path-from-shell-initialize))
 
 (use-package neotree
@@ -122,12 +123,14 @@
   (setq interprogram-paste-function 'paste-with-window-system))
 
 ;; asdf enable
-(let ((path (substitute-env-vars (concat "$HOME/.asdf" "/shims:" "$HOME/.asdf" "/bin:$PATH"))))
+(let ((path (substitute-env-vars (concat (concat (if (getenv "ASDF_DATA_DIR") "$ASDF_DATA_DIR" "$HOME") "/.asdf/shims")
+                                         ":$HOME/.asdf/bin:$PATH"))))
   (setenv "PATH" path)
   (setq exec-path
         (append
          (split-string-and-unquote path ":")
          exec-path)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
