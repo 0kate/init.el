@@ -39,8 +39,9 @@
 
 (use-package highlight-indent-guides
   :ensure t
-  :config
-  (setq highlight-indent-guides-method 'character)
+  :custom
+  (highlight-indent-guides-method 'character)
+  (highlight-indent-guides-character ?┊)
   :hook
   ((prog-mode . highlight-indent-guides-mode)))
 
