@@ -68,6 +68,19 @@
         company-minimum-prefix-length 1
         company-idle-delay 0.0))
 
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode))
+
+(use-package flycheck-rust
+  :ensure t
+  :hook
+  ((rust-mode . flycheck-rust-setup)))
+
+(use-package yaml-mode
+  :ensure t)
+
 (use-package rust-mode
   :ensure t)
 
@@ -76,10 +89,27 @@
   :init
   (setq lsp-keymap-prefix "C-c l")
   :hook
-  ((ruby-mode . lsp)
+  ((c-mode . lsp)
+   (ruby-mode . lsp)
    (rust-mode . lsp))
   ;; (lsp-mode . lsp-enable-which-key-integration)
+  :config
+  ;; for clangd
+  (setq lsp-clangd-binary-path (executable-find "clangd"))
+  ;; for rust-analyzer
+  ;; (setq lsp-rust-analyzer-display-parameter-hints t
+  ;;       lsp-rust-analyzer-binding-mode-hints t
+  ;;       lsp-rust-analyzer-inlay-hints-mode t
+  ;;       lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+  ;;       lsp-rust-analyzer-server-display-inlay-hints t)
   :commands lsp)
+
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-code-actions t))
 
 ;; Hooks
 (add-hook 'window-setup-hook '(lambda ()
@@ -87,6 +117,8 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (add-hook 'eshell-mode-hook '(lambda ()
                                (display-line-numbers-mode -1)))
+(add-hook 'c-mode-hook '(lambda ()
+                          (setq c-basic-offset 8)))
 
 ;; Basic options
 (setq maximum-scroll-margin 0.5
