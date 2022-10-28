@@ -84,6 +84,9 @@
 (use-package rust-mode
   :ensure t)
 
+(use-package zig-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
   :init
@@ -91,7 +94,8 @@
   :hook
   ((c-mode . lsp)
    (ruby-mode . lsp)
-   (rust-mode . lsp))
+   (rust-mode . lsp)
+   (zig-mode . lsp))
   ;; (lsp-mode . lsp-enable-which-key-integration)
   :config
   ;; for clangd
@@ -102,6 +106,8 @@
   ;;       lsp-rust-analyzer-inlay-hints-mode t
   ;;       lsp-rust-analyzer-display-lifetime-elision-hints-enable t
   ;;       lsp-rust-analyzer-server-display-inlay-hints t)
+  ;; for zls
+  (setq lsp-zig-zls-executable (executable-find "zls"))
   :commands lsp)
 
 (use-package lsp-ui
@@ -139,8 +145,10 @@
 ;; Basic keybinds
 ;; (global-set-key (kbd "C-i") 'next-buffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(global-set-key (kbd "M-]") 'enlarge-window-horizontally)
-(global-set-key (kbd "M-[") 'shrink-window-horizontally)
+(global-set-key (kbd "C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "C-<up>") 'enlarge-window)
+(global-set-key (kbd "C-<down>") 'shrink-window)
 
 ;; Custsom commands
 (defun split ()
