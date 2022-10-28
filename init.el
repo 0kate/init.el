@@ -159,23 +159,25 @@
   (interactive)
   (split-window-vertically))
 
-(setq clipboard-cli "xclip"
-      cut-command clipboard-cli
-      paste-command (concat clipboard-cli " -o"))
+(setq copy-command '("xclip")
+      paste_command "xclip -o | tr -d \r"
+      copy-process nil)
 
-(defun cut-with-window-system (text &optional rest)
-  (let ((process-connection-type nil))
-    (let ((proc (start-process cut-command "*Messages*" cut-command)))
-      (process-send-string proc text)
-      (process-send-eof proc))))
+(defun copy-to-clipboard (text)
+  (setq copy-process (make-process :name "copy-proc"
+                                   :buffer nil
+                                   :command copy-command
+                                   :connection-type 'pipe))
+  (process-send-string copy-process text)
+  (process-send-eof copy-process))
 
-(defun paste-with-window-system ()
-  (shell-command-to-string paste-command))
+(defun paste-from-clipboard ()
+  (if (and copy-process (process-live-p copy-process))
+      nil
+    (shell-command-to-string paste_command)))
 
-(when (and (not window-system)
-           (executable-find clipboard-cli))
-  (setq interprogram-cut-function 'cut-with-window-system)
-  (setq interprogram-paste-function 'paste-with-window-system))
+(setq interprogram-cut-function 'copy-to-clipboard)
+(setq interprogram-paste-function 'paste-from-clipboard)
 
 ;; asdf enable
 (let ((path (substitute-env-vars (concat (concat (if (getenv "ASDF_DATA_DIR") "$ASDF_DATA_DIR" "$HOME") "/.asdf/shims")
