@@ -122,7 +122,9 @@
                                 (set-face-background 'default "undefined")))
 (add-hook 'after-init-hook 'global-company-mode)
 (add-hook 'eshell-mode-hook '(lambda ()
-                               (display-line-numbers-mode -1)))
+                               (display-line-numbers-mode -1)
+                               (setq-local maximum-scroll-margin 1.0
+                                           scroll-margin 0)))
 (add-hook 'c-mode-hook '(lambda ()
                           (setq c-basic-offset 8)))
 
