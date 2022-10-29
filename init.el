@@ -123,6 +123,14 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (add-hook 'eshell-mode-hook '(lambda ()
                                (display-line-numbers-mode -1)
+                               (local-set-key (kbd "C-l") (lambda ()
+                                                            (with-current-buffer "*eshell*"
+                                                              (end-of-buffer)
+                                                              (eshell-kill-input)
+                                                              (insert "clear 1")
+                                                              (eshell-send-input)
+                                                              (eshell-bol)
+                                                              (yank))))
                                (setq-local maximum-scroll-margin 1.0
                                            scroll-margin 0)))
 (add-hook 'c-mode-hook '(lambda ()
