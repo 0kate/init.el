@@ -6,121 +6,118 @@
 (package-initialize)
 (package-refresh-contents)
 
-(require 'use-package)
+(defun package-is-installed (package)
+  (not (eq (locate-library package) nil)))
 
-(use-package monokai-theme
-  :ensure t
-  :config
-  (load-theme 'monokai t))
+(defun package-ensure-package (package)
+  (if (not (package-is-installed package))
+      (package-install package)))
 
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
-  (exec-path-from-shell-initialize))
+;; monokai-theme
+(package-ensure-package "monokai-theme")
+(load-theme 'monokai t)
 
-(use-package neotree
-  :ensure t
-  :config
-  (setq neo-theme 'nerd
-        neo-window-fixed-size nil
-        neo-autorefresh t)
-  :bind
-  (("C-t" . neotree-toggle)))
+;; exec-path-from-shell
+(package-ensure-package "exec-path-from-shell")
+(exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
+(exec-path-from-shell-initialize)
 
-(use-package whitespace
-  :ensure t
-  :config
-  (global-whitespace-mode 1)
-  (setq whitespace-line nil)
-  (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
-                                      (tab-mark     ?\t     [?\xBB ?\t])
-                                      (newline-mark ?\n     [?¬ ?\n]))))
+;; neotree
+(package-ensure-package "neotree")
+(setq neo-theme 'nerd
+      neo-window-fixed-size nil
+      neo-autorefresh t)
+(global-set-key (kbd "C-t") 'neotree-toggle)
 
-(use-package highlight-indent-guides
-  :ensure t
-  :custom
-  (highlight-indent-guides-method 'character)
-  (highlight-indent-guides-character ?┊)
-  :hook
-  ((prog-mode . highlight-indent-guides-mode)))
+;; whitespace
+(package-ensure-package "whitespace")
+(global-whitespace-mode 1)
+(setq whitespace-line nil
+      whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
+                                    (tab-mark     ?\t     [?\xBB ?\t])
+                                    (newline-mark ?\n     [?¬ ?\n])))
 
-(use-package rainbow-delimiters
-  :ensure t
-  :hook
-  ((prog-mode . rainbow-delimiters-mode)))
+;; highlight-indent-guides
+(package-ensure-package "highlight-indent-guides")
+(setq highlight-indent-guides-method 'character
+      highlight-indent-guides-character ?┊)
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 
-(use-package magit
-  :ensure t)
+;; rainbow-delimiters
+(package-ensure-package "rainbow-delimiters")
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
-(use-package git-gutter
-  :ensure t
-  :hook
-  ((prog-mode . git-gutter-mode))
-  :custom
-  (git-gutter:modified-sign "~"))
+;; magit
+(package-ensure-package "magit")
 
-(use-package company
-  :ensure
-  :config
-  (global-company-mode t)
-  (setq company-backends '((company-capf company-dabbrev-code))
-        company-minimum-prefix-length 1
-        company-idle-delay 0.0))
+;; git-gutter
+(package-ensure-package "git-gutter")
+(add-hook 'prog-mode-hook 'git-gutter-mode)
+(setq git-gutter:modified-sign "~")
 
-(use-package flycheck
-  :ensure t
-  :init
-  (global-flycheck-mode))
+;; company
+(package-ensure-package "company")
+(global-company-mode t)
+(setq company-backends '((company-capf company-dabbrev-code))
+      company-minimum-prefix-length 1
+      company-idle-delay 0.0)
 
-(use-package flycheck-rust
-  :ensure t
-  :hook
-  ((rust-mode . flycheck-rust-setup)))
+;; flycheck
+(package-ensure-package "flycheck")
+(global-flycheck-mode)
 
-(use-package yaml-mode
-  :ensure t)
+;; flycheck-rust
+(package-ensure-package "flycheck-rust")
+(add-hook 'rust-mode-hook 'flycheck-rust-setup)
 
-(use-package rust-mode
-  :ensure t)
+;; yaml-mode
+(package-ensure-package "yaml-mode")
 
-(use-package zig-mode
-  :ensure t)
+;; rust-mode
+(package-ensure-package "rust-mode")
 
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook
-  ((c-mode . lsp)
-   (ruby-mode . lsp)
-   (rust-mode . lsp)
-   (zig-mode . lsp))
-  ;; (lsp-mode . lsp-enable-which-key-integration)
-  :config
-  ;; for clangd
-  (setq lsp-clangd-binary-path (executable-find "clangd"))
-  ;; for rust-analyzer
-  ;; (setq lsp-rust-analyzer-display-parameter-hints t
-  ;;       lsp-rust-analyzer-binding-mode-hints t
-  ;;       lsp-rust-analyzer-inlay-hints-mode t
-  ;;       lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-  ;;       lsp-rust-analyzer-server-display-inlay-hints t)
-  ;; for zls
-  (setq lsp-zig-zls-executable (executable-find "zls"))
-  :commands lsp)
+;; zig-mode
+(package-ensure-package "zig-mode")
 
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-show-code-actions t))
+;; typescript-mode
+(package-ensure-package "typescript-mode")
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+
+;; lsp-mode
+(package-ensure-package "lsp-mode")
+(setq lsp-keymap-prefix "C-c l")
+;; for debug
+(setq lsp-print-io t)
+;; for clangd
+(setq lsp-clangd-binary-path (executable-find "clangd"))
+;; for rust-analyzer
+;; (setq lsp-rust-analyzer-display-parameter-hints t
+;;       lsp-rust-analyzer-binding-mode-hints t
+;;       lsp-rust-analyzer-inlay-hints-mode t
+;;       lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+;;       lsp-rust-analyzer-server-display-inlay-hints t)
+;; for zls
+(setq lsp-zig-zls-executable (executable-find "zls"))
+;; for typescript-language-server
+;; (setq lsp-clients-javascript-preferences '("format.indentSize" 2))
+;; (setq lsp-clients-typescript-preferences '("format.indentSize" 2))
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'ruby-mode-hook 'lsp)
+(add-hook 'rust-mode-hook 'lsp)
+(add-hook 'zig-mode-hook 'lsp)
+(add-hook 'typescript-mode-hook 'lsp)
+
+;; lsp-ui
+(package-ensure-package "lsp-ui")
+(setq lsp-ui-sideline-show-diagnostics t
+      lsp-ui-sideline-show-code-actions t)
 
 ;; Hooks
 (add-hook 'window-setup-hook '(lambda ()
                                 (set-face-background 'default "undefined")))
 (add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'dired-load-hook (lambda () (load "dired-x")))
 (add-hook 'eshell-mode-hook '(lambda ()
                                (display-line-numbers-mode -1)
                                (local-set-key (kbd "C-l") (lambda ()
@@ -153,8 +150,6 @@
   (global-display-line-numbers-mode))
 
 ;; Basic keybinds
-;; (global-set-key (kbd "C-i") 'next-buffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "C-<up>") 'enlarge-window)
@@ -203,8 +198,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(use-package neotree mozc monokai-theme magit lsp-mode company color-theme-sanityinc-tomorrow)))
+ '(package-selected-packages '(use-package monokai-theme magit lsp-mode company)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
