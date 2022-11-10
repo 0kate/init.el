@@ -6,31 +6,28 @@
 (package-initialize)
 (package-refresh-contents)
 
-(defun package-is-installed (package)
-  (not (eq (locate-library package) nil)))
-
 (defun package-ensure-package (package)
-  (if (not (package-is-installed package))
-      (package-install package)))
+  (unless (package-installed-p package)
+    (package-install package)))
 
 ;; monokai-theme
-(package-ensure-package "monokai-theme")
+(package-ensure-package 'monokai-theme)
 (load-theme 'monokai t)
 
 ;; exec-path-from-shell
-(package-ensure-package "exec-path-from-shell")
+(package-ensure-package 'exec-path-from-shell)
 (exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
 (exec-path-from-shell-initialize)
 
 ;; neotree
-(package-ensure-package "neotree")
+(package-ensure-package 'neotree)
 (setq neo-theme 'nerd
       neo-window-fixed-size nil
       neo-autorefresh t)
 (global-set-key (kbd "C-t") 'neotree-toggle)
 
 ;; whitespace
-(package-ensure-package "whitespace")
+(package-ensure-package 'whitespace)
 (global-whitespace-mode 1)
 (setq whitespace-line nil
       whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
@@ -38,105 +35,122 @@
                                     (newline-mark ?\n     [?¬ ?\n])))
 
 ;; highlight-indent-guides
-(package-ensure-package "highlight-indent-guides")
+(package-ensure-package 'highlight-indent-guides)
 (setq highlight-indent-guides-method 'character
       highlight-indent-guides-character ?┊)
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+(add-hook 'text-mode-hook 'highlight-indent-guides-mode)
 
 ;; rainbow-delimiters
-(package-ensure-package "rainbow-delimiters")
+(package-ensure-package 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;; magit
-(package-ensure-package "magit")
+(package-ensure-package 'magit)
 
 ;; git-gutter
-(package-ensure-package "git-gutter")
-(add-hook 'prog-mode-hook 'git-gutter-mode)
+(package-ensure-package 'git-gutter)
 (setq git-gutter:modified-sign "~")
+(global-git-gutter-mode t)
 
 ;; company
-(package-ensure-package "company")
+(package-ensure-package 'company)
 (global-company-mode t)
 (setq company-backends '((company-capf company-dabbrev-code))
       company-minimum-prefix-length 1
       company-idle-delay 0.0)
 
 ;; flycheck
-(package-ensure-package "flycheck")
+(package-ensure-package 'flycheck)
 (global-flycheck-mode)
 
 ;; flycheck-rust
-(package-ensure-package "flycheck-rust")
+(package-ensure-package 'flycheck-rust)
 (add-hook 'rust-mode-hook 'flycheck-rust-setup)
 
+;; ivy
+(package-ensure-package 'ivy)
+(ivy-mode t)
+
 ;; yaml-mode
-(package-ensure-package "yaml-mode")
+(package-ensure-package 'yaml-mode)
 
 ;; rust-mode
-(package-ensure-package "rust-mode")
+(package-ensure-package 'rust-mode)
 
 ;; zig-mode
-(package-ensure-package "zig-mode")
+(package-ensure-package 'zig-mode)
 
-;; typescript-mode
-(package-ensure-package "typescript-mode")
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+;; web-mode
+(package-ensure-package 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(setq web-mode-attr-indent-offset nil
+      web-mode-markup-indent-offset 2
+      web-mode-css-indent-offset 2
+      web-mode-code-indent-offset 2
+      web-mode-enable-current-element-highlight t)
+(setq web-mode-enable-auto-closing t
+      web-mode-enable-auto-pairing t
+      web-mode-auto-close-style 2
+      web-mode-tag-auto-close-style 2)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(web-mode-html-tag-bracket-face ((t (:foreground "#909090")))))
+
+(package-ensure-package 'tide)
+(add-hook 'web-mode '(lambda ()
+                       (tide-setup)))
+
+;; rainbow-mode
+(package-ensure-package 'rainbow-mode)
+(add-hook 'prog-mode-hook 'rainbow-mode)
+(add-hook 'text-mode-hook 'rainbow-mode)
 
 ;; lsp-mode
-(package-ensure-package "lsp-mode")
+(package-ensure-package 'lsp-mode)
 (setq lsp-keymap-prefix "C-c l")
 ;; for debug
-(setq lsp-print-io t)
+;; (setq lsp-print-io t)
 ;; for clangd
 (setq lsp-clangd-binary-path (executable-find "clangd"))
 ;; for rust-analyzer
-;; (setq lsp-rust-analyzer-display-parameter-hints t
-;;       lsp-rust-analyzer-binding-mode-hints t
-;;       lsp-rust-analyzer-inlay-hints-mode t
-;;       lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-;;       lsp-rust-analyzer-server-display-inlay-hints t)
-;; for zls
-(setq lsp-zig-zls-executable (executable-find "zls"))
-;; for typescript-language-server
-;; (setq lsp-clients-javascript-preferences '("format.indentSize" 2))
-;; (setq lsp-clients-typescript-preferences '("format.indentSize" 2))
+(setq lsp-rust-analyzer-display-parameter-hints t
+      lsp-rust-analyzer-binding-mode-hints t
+      lsp-rust-analyzer-inlay-hints-mode t
+      lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+      lsp-rust-analyzer-server-display-inlay-hints t)
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'ruby-mode-hook 'lsp)
 (add-hook 'rust-mode-hook 'lsp)
-(add-hook 'zig-mode-hook 'lsp)
-(add-hook 'typescript-mode-hook 'lsp)
 
 ;; lsp-ui
-(package-ensure-package "lsp-ui")
+(package-ensure-package 'lsp-ui)
 (setq lsp-ui-sideline-show-diagnostics t
       lsp-ui-sideline-show-code-actions t)
 
 ;; Hooks
+(defun disable-scroll-margin ()
+  (setq-local maximum-scroll-margin 0.5
+              scroll-margin 99999
+              scroll-step 1))
+
 (add-hook 'window-setup-hook '(lambda ()
                                 (set-face-background 'default "undefined")))
 (add-hook 'after-init-hook 'global-company-mode)
-(add-hook 'dired-load-hook (lambda () (load "dired-x")))
+(add-hook 'eshell-mode-hook '(lambda ()
+                               (display-line-numbers-mode -1)))
 (add-hook 'eshell-mode-hook '(lambda ()
                                (display-line-numbers-mode -1)
-                               (local-set-key (kbd "C-l") (lambda ()
-                                                            (with-current-buffer "*eshell*"
-                                                              (end-of-buffer)
-                                                              (eshell-kill-input)
-                                                              (insert "clear 1")
-                                                              (eshell-send-input)
-                                                              (eshell-bol)
-                                                              (yank))))
-                               (setq-local maximum-scroll-margin 1.0
-                                           scroll-margin 0)))
+                               (eshell-disable-buffer-control)))
 (add-hook 'c-mode-hook '(lambda ()
                           (setq c-basic-offset 8)))
+(add-hook 'prog-mode-hook '(lambda () (disable-scroll-margin)))
+(add-hook 'text-mode-hook '(lambda () (disable-scroll-margin)))
 
 ;; Basic options
-(setq maximum-scroll-margin 0.5
-      scroll-margin 99999
-      scroll-step 1)
 (setq-default indent-tabs-mode nil)
 (setq make-backup-files nil
       auto-save-default nil
@@ -150,12 +164,37 @@
   (global-display-line-numbers-mode))
 
 ;; Basic keybinds
-(global-set-key (kbd "C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "C-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "C-<up>") 'enlarge-window)
-(global-set-key (kbd "C-<down>") 'shrink-window)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Custsom commands
+(defun enable-window-sizing ()
+  (interactive)
+  (global-set-key (kbd "C-n") 'enlarge-window)
+  (global-set-key (kbd "C-p") 'shrink-window)
+  (global-set-key (kbd "C-f") 'enlarge-window-horizontally)
+  (global-set-key (kbd "C-b") 'shrink-window-horizontally))
+
+(defun disable-window-sizing ()
+  (interactive)
+  (global-set-key (kbd "C-n") 'next-line)
+  (global-set-key (kbd "C-p") 'previous-line)
+  (global-set-key (kbd "C-f") 'forward-char)
+  (global-set-key (kbd "C-b") 'backward-char))
+
+(defun eshell-enable-buffer-control ()
+  (interactive)
+  (when (eq major-mode 'eshell-mode)
+    (local-set-key (kbd "C-p") 'previous-line)
+    (local-set-key (kbd "C-n") 'next-line)
+    (message "[eshell] Buffer control is enabled")))
+
+(defun eshell-disable-buffer-control()
+  (interactive)
+  (when (eq major-mode 'eshell-mode)
+    (local-set-key (kbd "C-p") 'eshell-previous-input)
+    (local-set-key (kbd "C-n") 'eshell-next-input)
+    (message "[eshell] Buffer control is disabled")))
+
 (defun split ()
   (interactive)
   (split-window-horizontally))
@@ -199,9 +238,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages '(use-package monokai-theme magit lsp-mode company)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
