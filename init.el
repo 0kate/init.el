@@ -78,8 +78,9 @@
 ;; rust-mode
 (package-ensure-package 'rust-mode)
 
-;; zig-mode
-(package-ensure-package 'zig-mode)
+;; docker
+(package-ensure-package 'docker)
+(package-ensure-package 'dockerfile-mode)
 
 ;; web-mode
 (package-ensure-package 'web-mode)
@@ -125,6 +126,8 @@
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'ruby-mode-hook 'lsp)
 (add-hook 'rust-mode-hook 'lsp)
+(add-hook 'yaml-mode 'lsp)
+(add-hook 'dockerfile-mode 'lsp)
 
 ;; lsp-ui
 (package-ensure-package 'lsp-ui)
