@@ -58,7 +58,7 @@
 (global-company-mode t)
 (setq company-backends '((company-capf company-dabbrev-code))
       company-minimum-prefix-length 1
-      company-idle-delay 0.0)
+      company-idle-delay 0)
 
 ;; flycheck
 (package-ensure-package 'flycheck)
@@ -84,6 +84,7 @@
 
 ;; web-mode
 (package-ensure-package 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 (setq web-mode-attr-indent-offset nil
       web-mode-markup-indent-offset 2
@@ -101,9 +102,15 @@
  ;; If there is more than one, they won't work right.
  '(web-mode-html-tag-bracket-face ((t (:foreground "#909090")))))
 
+(package-ensure-package 'typescript-mode)
+
 (package-ensure-package 'tide)
-(add-hook 'web-mode '(lambda ()
-                       (tide-setup)))
+(setq tide-completion-ignore-case t
+      tide-completion-show-source t
+      tide-completion-fuzzy t
+      tide-completion-detailed t)
+(add-hook 'web-mode-hook (lambda ()
+                      (tide-setup)))
 
 ;; rainbow-mode
 (package-ensure-package 'rainbow-mode)
@@ -134,6 +141,11 @@
 (setq lsp-ui-sideline-show-diagnostics t
       lsp-ui-sideline-show-code-actions t)
 
+;; projectile-rails
+(package-ensure-package 'projectile-rails)
+;; (setq projectile-rails-custom-server-command "rails server --port 12345")
+(projectile-rails-global-mode)
+
 ;; Hooks
 (defun disable-scroll-margin ()
   (setq-local maximum-scroll-margin 0.5
@@ -152,6 +164,7 @@
                           (setq c-basic-offset 8)))
 (add-hook 'prog-mode-hook '(lambda () (disable-scroll-margin)))
 (add-hook 'text-mode-hook '(lambda () (disable-scroll-margin)))
+(add-to-list 'auto-mode-alist '("\\.jbuilder\\'" . ruby-mode))
 
 ;; Basic options
 (setq-default indent-tabs-mode nil)
@@ -241,4 +254,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages '(use-package monokai-theme magit lsp-mode company)))
-
