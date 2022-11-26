@@ -141,10 +141,14 @@
 (setq lsp-ui-sideline-show-diagnostics t
       lsp-ui-sideline-show-code-actions t)
 
-;; projectile-rails
-(package-ensure-package 'projectile-rails)
-;; (setq projectile-rails-custom-server-command "rails server --port 12345")
-(projectile-rails-global-mode)
+;; powerline
+(package-ensure-package 'powerline)
+(powerline-center-theme)
+
+;; restclient
+(package-ensure-package 'restclient)
+(package-ensure-package 'company-restclient)
+(add-to-list 'company-backends 'company-restclient)
 
 ;; Hooks
 (defun disable-scroll-margin ()
@@ -253,4 +257,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(use-package monokai-theme magit lsp-mode company)))
+ '(package-selected-packages
+   '(restclient use-package monokai-theme magit lsp-mode company)))
