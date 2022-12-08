@@ -102,7 +102,9 @@
  ;; If there is more than one, they won't work right.
  '(web-mode-html-tag-bracket-face ((t (:foreground "#909090")))))
 
-(package-ensure-package 'typescript-mode)
+;; json-mode
+(package-ensure-package 'json-mode)
+(setq js-indent-level 2)
 
 (package-ensure-package 'tide)
 (setq tide-completion-ignore-case t
@@ -258,4 +260,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(restclient use-package monokai-theme magit lsp-mode company)))
+   '(all-the-icons-ibuffer all-the-icons json-mode restclient use-package monokai-theme magit lsp-mode company))
+
+ '(eshell-prompt-function
+   (lambda ()
+     (concat "\n"
+             (propertize (getenv "USER") 'face '(:foreground "green" :bold t))
+             (propertize "@" 'face '(:foreground "white"))
+             (system-name)
+             " "
+             (eshell/pwd)
+             (propertize "  " 'face '(:foreground "white"))
+             (magit-get-current-branch)
+             (propertize "\n " 'face '(:foreground "white"))))))
