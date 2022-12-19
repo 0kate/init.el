@@ -19,6 +19,10 @@
 (exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
 (exec-path-from-shell-initialize)
 
+;; direnv
+(package-ensure-package 'direnv)
+(direnv-mode)
+
 ;; neotree
 (package-ensure-package 'neotree)
 (setq neo-theme 'nerd
@@ -59,6 +63,17 @@
 (setq company-backends '((company-capf company-dabbrev-code))
       company-minimum-prefix-length 1
       company-idle-delay 0)
+
+;; powerline
+(package-ensure-package 'powerline)
+(powerline-center-theme)
+
+;; restclient
+(package-ensure-package 'restclient)
+
+;; company-restclient
+(package-ensure-package 'company-restclient)
+(add-to-list 'company-backends 'company-restclient)
 
 ;; flycheck
 (package-ensure-package 'flycheck)
@@ -135,7 +150,7 @@
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'ruby-mode-hook 'lsp)
 (add-hook 'rust-mode-hook 'lsp)
-(add-hook 'yaml-mode 'lsp)
+(add-hook 'yaml-mode-hook 'lsp)
 (add-hook 'dockerfile-mode 'lsp)
 
 ;; lsp-ui
@@ -189,6 +204,11 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Custsom commands
+(defun restclient-new-buffer ()
+  (interactive)
+  (set-buffer (generate-new-buffer "*restclient*"))
+  (restclient-mode))
+
 (defun enable-window-sizing ()
   (interactive)
   (global-set-key (kbd "C-n") 'enlarge-window)
@@ -225,25 +245,25 @@
   (interactive)
   (split-window-vertically))
 
-(setq copy-command '("xclip")
-      paste_command "xclip -o | tr -d \r"
-      copy-process nil)
+;; (setq copy-command '("xclip")
+;;       paste_command "xclip -o | tr -d \r"
+;;       copy-process nil)
 
-(defun copy-to-clipboard (text)
-  (setq copy-process (make-process :name "copy-proc"
-                                   :buffer nil
-                                   :command copy-command
-                                   :connection-type 'pipe))
-  (process-send-string copy-process text)
-  (process-send-eof copy-process))
+;; (defun copy-to-clipboard (text)
+;;   (setq copy-process (make-process :name "copy-proc"
+;;                                    :buffer nil
+;;                                    :command copy-command
+;;                                    :connection-type 'pipe))
+;;   (process-send-string copy-process text)
+;;   (process-send-eof copy-process))
 
-(defun paste-from-clipboard ()
-  (if (and copy-process (process-live-p copy-process))
-      nil
-    (shell-command-to-string paste_command)))
+;; (defun paste-from-clipboard ()
+;;   (if (and copy-process (process-live-p copy-process))
+;;       nil
+;;     (shell-command-to-string paste_command)))
 
-(setq interprogram-cut-function 'copy-to-clipboard)
-(setq interprogram-paste-function 'paste-from-clipboard)
+;; (setq interprogram-cut-function 'copy-to-clipboard)
+;; (setq interprogram-paste-function 'paste-from-clipboard)
 
 ;; asdf enable
 (let ((path (substitute-env-vars (concat (concat (if (getenv "ASDF_DATA_DIR") "$ASDF_DATA_DIR" "$HOME") "/.asdf/shims")
@@ -259,17 +279,21 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(all-the-icons-ibuffer all-the-icons json-mode restclient use-package monokai-theme magit lsp-mode company))
-
  '(eshell-prompt-function
-   (lambda ()
-     (concat "\n"
-             (propertize (getenv "USER") 'face '(:foreground "green" :bold t))
-             (propertize "@" 'face '(:foreground "white"))
+   (lambda nil
+     (concat (propertize
+              (getenv "USER")
+              'face
+              '(:foreground "green" :bold t))
+             (propertize "@" 'face
+                         '(:foreground "white"))
              (system-name)
-             " "
+             (propertize ":" 'face '(:foreground "white"))
              (eshell/pwd)
-             (propertize "  " 'face '(:foreground "white"))
+             (propertize "  " 'face
+                         '(:foreground "white"))
              (magit-get-current-branch)
-             (propertize "\n " 'face '(:foreground "white"))))))
+             (propertize "  " 'face '(:foreground "white")))))
+ '(eshell-prompt-regexp ".*  ")
+ '(package-selected-packages
+   '(all-the-icons-ibuffer all-the-icons json-mode restclient use-package monokai-theme magit lsp-mode company)))
