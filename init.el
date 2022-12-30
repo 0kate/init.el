@@ -64,10 +64,6 @@
       company-minimum-prefix-length 1
       company-idle-delay 0)
 
-;; powerline
-(package-ensure-package 'powerline)
-(powerline-center-theme)
-
 ;; restclient
 (package-ensure-package 'restclient)
 
@@ -121,6 +117,10 @@
 (package-ensure-package 'json-mode)
 (setq js-indent-level 2)
 
+;; svelte-mode
+(package-ensure-package 'svelte-mode)
+(customize-set-variable 'svelte-basic-offset 2)
+
 (package-ensure-package 'tide)
 (setq tide-completion-ignore-case t
       tide-completion-show-source t
@@ -152,6 +152,7 @@
 (add-hook 'rust-mode-hook 'lsp)
 (add-hook 'yaml-mode-hook 'lsp)
 (add-hook 'dockerfile-mode 'lsp)
+(add-hook 'svelte-mode-hook 'lsp)
 
 ;; lsp-ui
 (package-ensure-package 'lsp-ui)
@@ -193,6 +194,7 @@
       auto-save-default nil
       create-lockfiles nil)
 (electric-pair-mode 1)
+(rectangle-mark-mode 1)
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -281,19 +283,22 @@
  ;; If there is more than one, they won't work right.
  '(eshell-prompt-function
    (lambda nil
-     (concat (propertize
-              (getenv "USER")
-              'face
-              '(:foreground "green" :bold t))
-             (propertize "@" 'face
-                         '(:foreground "white"))
-             (system-name)
-             (propertize ":" 'face '(:foreground "white"))
-             (eshell/pwd)
-             (propertize "  " 'face
-                         '(:foreground "white"))
-             (magit-get-current-branch)
-             (propertize "  " 'face '(:foreground "white")))))
+     (concat
+      (propertize
+       (getenv "USER")
+       'face
+       '(:foreground "green" :bold t))
+      (propertize "@" 'face
+                  '(:foreground "white"))
+      (system-name)
+      (propertize ":" 'face
+                  '(:foreground "white"))
+      (eshell/pwd)
+      (propertize "  " 'face
+                  '(:foreground "white"))
+      (magit-get-current-branch)
+      (propertize "  " 'face
+                  '(:foreground "white")))))
  '(eshell-prompt-regexp ".*  ")
  '(package-selected-packages
-   '(all-the-icons-ibuffer all-the-icons json-mode restclient use-package monokai-theme magit lsp-mode company)))
+   '(org-preview-html all-the-icons-ibuffer all-the-icons json-mode restclient use-package monokai-theme magit lsp-mode company)))
