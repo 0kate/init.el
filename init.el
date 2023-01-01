@@ -66,12 +66,13 @@
 
 (use-package whitespace
   :init
-  (setq whitespace-line nil
-        whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
+  (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
                                       (tab-mark     ?\t     [?\xBB ?\t])
                                       (newline-mark ?\n     [?¬ ?\n])))
   :config
-  (global-whitespace-mode 1))
+  (global-whitespace-mode 1)
+  :custom
+  (whitespace-line nil))
 
 (use-package highlight-indent-guides
   :ensure t
@@ -154,10 +155,11 @@
         web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-auto-closing t
         web-mode-enable-auto-pairing t
-        web-mode-auto-close-style 2
-        web-mode-tag-auto-close-style 2)
+        web-mode-auto-close-style 2)
   :mode (("\\.ts\\'" . web-mode)
          ("\\.tsx\\'" . web-mode))
+  :custom
+  (web-mode-tag-auto-close-style 2)
   :custom-face
   (web-mode-html-tag-bracket-face ((t (:foreground "#909090")))))
 
@@ -186,22 +188,21 @@
   :init
   ;; for debugging
   ;; (setq lsp-print-io t)
-
-  ;; for clangd
-  (setq lsp-clangd-binary-path (executable-find "clangd"))
-
-  ;; for rust-analyzer
-  (setq lsp-rust-analyzer-display-parameter-hints t
-        lsp-rust-analyzer-binding-mode-hints t
-        lsp-rust-analyzer-inlay-hints-mode t
-        lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-        lsp-rust-analyzer-server-display-inlay-hints t)
   :hook ((c-mode . lsp)
          (ruby-mode . lsp)
          (rust-mode . lsp)
          (yaml-mode . lsp)
          (dockerfile-mode . lsp)
-         (svelte-mode . lsp)))
+         (svelte-mode . lsp))
+  :custom
+  ;; for clangd
+  (setq lsp-clangd-binary-path (executable-find "clangd"))
+  ;; for rust-analyzer
+  (lsp-rust-analyzer-display-parameter-hints t)
+  (lsp-rust-analyzer-binding-mode-hints t)
+  (lsp-rust-analyzer-inlay-hints-mode t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable t)
+  (lsp-rust-analyzer-server-display-inlay-hints t))
 
 (use-package lsp-ui
   :ensure t
