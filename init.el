@@ -31,20 +31,38 @@
   (exec-path-from-shell-copy-envs '("ASDF_DIR" "ASDF_DATA_DIR"))
   (exec-path-from-shell-initialize))
 
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1))
+
 (use-package neotree
   :ensure t
+  :after (projectile)
   :init
   (setq neo-theme 'nerd
         neo-window-fixed-size nil
         neo-autorefresh t)
-  :bind (("C-t" . neotree-toggle)))
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+  :bind (("C-t" .  neotree-project-dir)))
 
 (use-package git-gutter
   :ensure t
   :init
   (setq git-gutter:modified-sign "~")
   :config
-  (global-git-gutter-mode t))
+  (global-git-gutter-mode +1))
 
 (use-package whitespace
   :init
