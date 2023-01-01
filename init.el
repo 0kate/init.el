@@ -122,6 +122,12 @@
   :config
   (ivy-mode t))
 
+(use-package ibuffer-projectile
+  :ensure t
+  :hook ((ibuffer . (lambda ()
+                      (ibuffer-projectile-set-filter-groups)
+                      (unless (eq ibuffer-sorting-mode 'alphabetic)
+                        (ibuffer-do-sort-by-alphabetic))))))
 
 
 ;; Packages (Integrations)
