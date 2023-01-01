@@ -218,15 +218,15 @@
               scroll-margin 99999
               scroll-step 1))
 
-(add-hook 'window-setup-hook '(lambda ()
-                                (set-face-background 'default "undefined")))
-(add-hook 'eshell-mode-hook '(lambda ()
-                               (display-line-numbers-mode -1)
-                               (eshell-disable-buffer-control)))
-(add-hook 'c-mode-hook '(lambda ()
-                          (setq c-basic-offset 8)))
-(add-hook 'prog-mode-hook '(lambda () (disable-scroll-margin)))
-(add-hook 'text-mode-hook '(lambda () (disable-scroll-margin)))
+(add-hook 'window-setup-hook (lambda ()
+                               (set-face-background 'default "undefined")))
+(add-hook 'eshell-mode-hook (lambda ()
+                              (display-line-numbers-mode -1)
+                              (eshell-disable-buffer-control)))
+(add-hook 'c-mode-hook (lambda ()
+                         (setq c-basic-offset 8)))
+(add-hook 'prog-mode-hook (lambda () (disable-scroll-margin)))
+(add-hook 'text-mode-hook (lambda () (disable-scroll-margin)))
 (add-to-list 'auto-mode-alist '("\\.jbuilder\\'" . ruby-mode))
 
 
