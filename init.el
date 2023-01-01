@@ -326,24 +326,29 @@
          (split-string-and-unquote path ":")
          exec-path)))
 
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (custom-set-variables
- '(eshell-prompt-function (lambda nil
-                            (concat
-                             (propertize
-                              (getenv "USER")
-                              'face
-                              '(:foreground "green" :bold t))
-                             (propertize "@" 'face
-                                         '(:foreground "white"))
-                             (system-name)
-                             (propertize ":" 'face
-                                         '(:foreground "white"))
-                             (eshell/pwd)
-                             (propertize "  " 'face
-                                         '(:foreground "white"))
-                             (magit-get-current-branch)
-                             (propertize "  " 'face
-                                         '(:foreground "white")))))
+ '(eshell-prompt-function
+   (lambda nil
+     (concat
+      (propertize
+       (getenv "USER")
+       'face
+       '(:foreground "green" :bold t))
+      (propertize "@" 'face
+                  '(:foreground "white"))
+      (system-name)
+      (propertize ":" 'face
+                  '(:foreground "white"))
+      (eshell/pwd)
+      (propertize "  " 'face
+                  '(:foreground "white"))
+      (magit-get-current-branch)
+      (propertize "  " 'face
+                  '(:foreground "white")))))
  '(eshell-prompt-regexp ".*  "))
 
 (profiler-report)
