@@ -77,11 +77,14 @@
   :ensure t
   :init
   (setq highlight-indent-guides-method 'character
-        highlight-indent-guides-character ?┊))
+        highlight-indent-guides-character ?┊)
+  :hook ((prog-mode . highlight-indent-guides-mode)))
 
 (use-package rainbow-mode :ensure t)
 
-(use-package rainbow-delimiters :ensure t)
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((prog-mode . rainbow-delimiters-mode)))
 
 (use-package company
   :ensure t
@@ -112,7 +115,7 @@
   :ensure t
   :after (flycheck)
   :config
-  (add-hook 'rust-mode-hook 'flycheck-rust-setup))
+  :hook ((rust-mode . flycheck-rust-setup)))
 
 (use-package ivy
   :ensure t
