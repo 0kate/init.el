@@ -66,13 +66,12 @@
 
 (use-package whitespace
   :init
-  (setq whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
+  (setq whitespace-line nil
+        whitespace-display-mappings '((space-mark   ?\x3000 [?\▫])
                                       (tab-mark     ?\t     [?\xBB ?\t])
                                       (newline-mark ?\n     [?¬ ?\n])))
   :config
-  (global-whitespace-mode 1)
-  :custom
-  (whitespace-line nil))
+  (global-whitespace-mode 1))
 
 (use-package highlight-indent-guides
   :ensure t
