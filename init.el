@@ -61,7 +61,10 @@
                 (neotree-dir project-dir)
                 (neotree-find file-name)))
         (message "Could not find git project root."))))
-  :bind (("C-t" .  neotree-project-dir)))
+  :bind (("C-t" .  neotree-project-dir)
+         (:map neotree-mode-map
+               ("C-f" . enlarge-window-horizontally)
+               ("C-b" . shrink-window-horizontally))))
 
 (use-package git-gutter
   :ensure t
