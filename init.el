@@ -17,6 +17,12 @@
     (message "use-package is installed!"))
   (require 'use-package))
 
+;; We need this import for compiled init file.
+;; In uncompiled init.el, use-package will autoload bind-key package.
+;; But in compiled init.el, bind-key is not autoloaded.
+;; For more details, see https://github.com/jwiegley/use-package/issues/436.
+(require 'bind-key)
+
 
 
 ;; Packages (Enhancements)
