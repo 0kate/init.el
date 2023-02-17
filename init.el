@@ -1,14 +1,35 @@
-;; Profiler
-(require 'profiler)
-(profiler-start 'cpu)
+;;; init.el --- Summary
 
-;; Packages manager
+
+
+;;; Commentary:
+
+;;; Code:
+
+;;; Parse command line args
+;; (defvar with-profiler (seq-contains-p command-line-args "--with-profiler"))
+;; (defvar with-refresh-packages (seq-contains-p command-line-args "--with-refresh-packages"))
+;; (defvar with-clipboard (seq-contains-p command-line-args "--with-clipboard"))
+;; (defvar debug-lsp (seq-contains-p command-line-args "--debug-lsp"))
+(defvar with-profiler t)
+(defvar with-refresh-packages t)
+(defvar with-clipboard t)
+(defvar debug-lsp nil)
+
+;;; Profiler:
+(when with-profiler
+  (require 'profiler)
+  (profiler-start 'cpu))
+
+;;; Packages manager:
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(package-initialize)
-(package-refresh-contents)
+
+(when with-refresh-packages
+  (package-initialize)
+  (package-refresh-contents))
 
 (eval-when-compile
   (unless (package-installed-p 'use-package)
@@ -23,6 +44,14 @@
 ;; For more details, see https://github.com/jwiegley/use-package/issues/436.
 (require 'bind-key)
 
+;; (add-to-list 'load-path "/home/kate/.config/emacs/scripts")
+
+;; (load "my-eshell.el")
+
+;; (load "exec-path-from-asdf.el")
+;; (exec-path-from-asdf-initialize)
+;; (load "clipper.el")
+;; (clipper-setup)
 
 
 ;; Packages (Enhancements)
@@ -41,6 +70,12 @@
   :ensure t
   :init
   (projectile-mode +1))
+
+(use-package projectile-rails
+  :ensure t
+  :after (projectile)
+  :config
+  (projectile-rails-global-mode))
 
 (use-package neotree
   :ensure t
@@ -65,6 +100,32 @@
          (:map neotree-mode-map
                ("C-f" . enlarge-window-horizontally)
                ("C-b" . shrink-window-horizontally))))
+
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1)
+  (setq evil-want-keybinding t)
+  (evil-global-set-key 'normal (kbd "C-t") 'neotree-project-dir)
+  :hook
+  ((eshell-mode . (lambda ()
+                    (evil-define-key 'normal eshell-mode-map (kbd "C-t") 'neotree-project-dir)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-t") 'neotree-project-dir)
+                    (evil-define-key 'normal eshell-mode-map (kbd "C-w C-w") 'other-window)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-w C-w") 'other-window)))
+   (neotree-mode . (lambda ()
+                     (evil-define-key 'normal neotree-mode-map (kbd "C-t") 'neotree-toggle)
+                     (evil-define-key 'normal neotree-mode-map (kbd "C-m") 'neotree-enter)
+                     (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+                     (evil-define-key 'normal neotree-mode-map (kbd "h") 'shrink-window-horizontally)
+                     (evil-define-key 'normal neotree-mode-map (kbd "l") 'enlarge-window-horizontally)))))
+
+(use-package evil-collection
+  :ensure t
+  :config
+  (evil-collection-init '(company eshell ibuffer ivy magit neotree)))
 
 (use-package git-gutter
   :ensure t
@@ -133,10 +194,11 @@
 
 (use-package ibuffer-projectile
   :ensure t
-  :hook ((ibuffer . (lambda ()
-                      (ibuffer-projectile-set-filter-groups)
-                      (unless (eq ibuffer-sorting-mode 'alphabetic)
-                        (ibuffer-do-sort-by-alphabetic))))))
+  :hook
+  ((ibuffer-mode . (lambda ()
+                     (ibuffer-projectile-set-filter-groups)
+                     (unless (eq ibuffer-sorting-mode 'alphabetic)
+                       (ibuffer-do-sort-by-alphabetic))))))
 
 
 ;; Packages (Integrations)
@@ -152,6 +214,9 @@
 (use-package docker :ensure t)
 (use-package dockerfile-mode :ensure t)
 (use-package typescript-mode :ensure t)
+(use-package clojure-mode
+  :ensure t
+  :mode (("\\.clj\\'" . clojure-mode)))
 
 (use-package web-mode
   :ensure t
@@ -164,8 +229,11 @@
   (setq web-mode-enable-auto-closing t
         web-mode-enable-auto-pairing t
         web-mode-auto-close-style 2)
-  :mode (("\\.ts\\'" . web-mode)
-         ("\\.tsx\\'" . web-mode))
+  :mode (("\\.js\\'" . web-mode)
+         ("\\.jsx\\'" . web-mode)
+         ("\\.ts\\'" . web-mode)
+         ("\\.tsx\\'" . web-mode)
+         ("\\.mjs\\'" . web-mode))
   :custom
   (web-mode-tag-auto-close-style 2)
   :custom-face
@@ -175,11 +243,6 @@
   :ensure t
   :init
   (setq js-indent-level 2))
-
-(use-package svelte-mode
-  :ensure t
-  :custom
-  (svelte-basic-offset 2))
 
 (use-package tide
   :ensure t
@@ -191,21 +254,56 @@
         tide-completion-detailed t)
   :hook ((web-mode . (lambda () (tide-setup)))))
 
+;; prisma-mode lsp integration
+(define-derived-mode prisma-mode js-mode "Prisma"
+  (setq-default indent-tabs-mode nil)
+  (setq tab-width 2)
+  (setq c-basic-offset 2)
+  (setq c-syntactic-indentation nil)
+  (setq js-indent-level 2))
+(add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-mode))
+
 (use-package lsp-mode
   :ensure t
   :init
   ;; for debugging
-  ;; (setq lsp-print-io t)
+  (when debug-lsp (setq lsp-log-io t))
+  :config
+  (lsp-dependency 'prisma-language-server
+                  '(:system "prisma-language-server")
+                  '(:npm
+                    :package "@prisma/language-server"
+                    :path "prisma-language-server"))
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection
+                                     (lambda ()
+                                       `(,(lsp-package-path 'prisma-language-server)
+                                         "--stdio")))
+                    :major-modes '(prisma-mode)
+                    :server-id 'prismals
+                    :activation-fn (lambda (file-name _mode)
+                                     (string= (f-ext file-name)
+                                              "prisma"))
+                    :download-server-fn (lambda (_client callback error-callback _update?)
+                                          (lsp-package-ensure
+                                           'prisma-language-server
+                                           callback
+                                           error-callback))
+                    ))
+  (add-to-list 'lsp-language-id-configuration '(prisma-mode . "prisma"))
   :hook ((c-mode . lsp)
          (ruby-mode . lsp)
          (rust-mode . lsp)
+         (clojure-mode . lsp)
          (yaml-mode . lsp)
          (dockerfile-mode . lsp)
-         (svelte-mode . lsp))
+         (prisma-mode . lsp))
   :custom
   ;; for clangd
   (setq lsp-clangd-binary-path (executable-find "clangd"))
   ;; for rust-analyzer
+  (lsp-rust-analyzer-server-command '("rustup" "run" "stable" "rust-analyzer"))
   (lsp-rust-analyzer-display-parameter-hints t)
   (lsp-rust-analyzer-binding-mode-hints t)
   (lsp-rust-analyzer-inlay-hints-mode t)
@@ -228,14 +326,15 @@
               scroll-step 1))
 
 (add-hook 'window-setup-hook (lambda ()
-                               (set-face-background 'default "undefined")))
+                               (set-face-background 'default (if (display-graphic-p) "#000000" "undefined"))))
 (add-hook 'eshell-mode-hook (lambda ()
+                              (setq-local evil-mode -1)
                               (display-line-numbers-mode -1)
                               (eshell-disable-buffer-control)))
-(add-hook 'c-mode-hook (lambda ()
-                         (setq c-basic-offset 8)))
+(add-hook 'c-mode-hook (lambda () (setq c-basic-offset 8)))
 (add-hook 'prog-mode-hook (lambda () (disable-scroll-margin)))
 (add-hook 'text-mode-hook (lambda () (disable-scroll-margin)))
+
 (add-to-list 'auto-mode-alist '("\\.jbuilder\\'" . ruby-mode))
 
 
@@ -306,35 +405,22 @@
   (interactive)
   (split-window-vertically))
 
-(setq copy-command '("xclip")
-      paste_command "xclip -o | tr -d \r"
-      copy-process nil)
-
 (defun copy-to-clipboard (text)
-  (setq copy-process (make-process :name "copy-proc"
-                                   :buffer nil
-                                   :command copy-command
-                                   :connection-type 'pipe))
-  (process-send-string copy-process text)
-  (process-send-eof copy-process))
+  "Copy selected TEXT into the GUI's clipboard."
+  (let* ((copy-process (make-process :name "copy-proc"
+                                     :buffer nil
+                                     :command '("xclip")
+                                     :connection-type 'pipe)))
+    (process-send-string copy-process text)
+    (process-send-eof copy-process)))
 
 (defun paste-from-clipboard ()
-  (if (and copy-process (process-live-p copy-process))
-      nil
-    (shell-command-to-string paste_command)))
+  "Paste text from the GUI's clipboard."
+  (shell-command-to-string "xclip -o"))
 
-(setq interprogram-cut-function 'copy-to-clipboard)
-(setq interprogram-paste-function 'paste-from-clipboard)
-
-;; asdf enable
-(let ((path (substitute-env-vars (concat (if (getenv "ASDF_DATA_DIR") "$ASDF_DATA_DIR" "$HOME")
-                                         "/.asdf/shims"
-                                         ":$HOME/.asdf/bin:$PATH"))))
-  (setenv "PATH" path)
-  (setq exec-path
-        (append
-         (split-string-and-unquote path ":")
-         exec-path)))
+(when with-clipboard
+  (setq interprogram-cut-function 'copy-to-clipboard)
+  (setq interprogram-paste-function 'paste-from-clipboard))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
@@ -344,22 +430,28 @@
  '(eshell-prompt-function
    (lambda nil
      (concat
-      (propertize
-       (getenv "USER")
-       'face
-       '(:foreground "green" :bold t))
-      (propertize "@" 'face
-                  '(:foreground "white"))
-      (system-name)
-      (propertize ":" 'face
-                  '(:foreground "white"))
+      (propertize (getenv "USER")
+                  'face '(:foreground "green" :bold t))
+      (propertize "@"
+                  'face '(:foreground "white"))
+      (propertize (system-name)
+                  'face '(:foreground "white"))
+      (propertize ":"
+                  'face '(:foreground "white"))
       (eshell/pwd)
-      (propertize "  " 'face
-                  '(:foreground "white"))
+      (propertize "  "
+                  'face '(:foreground "white"))
       (magit-get-current-branch)
-      (propertize "  " 'face
-                  '(:foreground "white")))))
+      (propertize "  "
+                  'face '(:foreground "white")))))
  '(eshell-prompt-regexp ".*  "))
 
-(profiler-report)
-(profiler-stop)
+
+
+(when with-profiler
+  (profiler-report)
+  (profiler-stop))
+
+(provide 'init)
+
+;;; init.el ends here
