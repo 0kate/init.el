@@ -111,10 +111,13 @@
   (evil-global-set-key 'normal (kbd "C-t") 'neotree-project-dir)
   :hook
   ((eshell-mode . (lambda ()
-                    (evil-define-key 'normal eshell-mode-map (kbd "C-t") 'neotree-project-dir)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-p") 'eshell-previous-input)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-n") 'eshell-next-input)
                     (evil-define-key 'insert eshell-mode-map (kbd "C-t") 'neotree-project-dir)
-                    (evil-define-key 'normal eshell-mode-map (kbd "C-w C-w") 'other-window)
-                    (evil-define-key 'insert eshell-mode-map (kbd "C-w C-w") 'other-window)))
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-w h") 'evil-window-left)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-w j") 'evil-window-down)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-w k") 'evil-window-up)
+                    (evil-define-key 'insert eshell-mode-map (kbd "C-w l") 'evil-window-right)))
    (neotree-mode . (lambda ()
                      (evil-define-key 'normal neotree-mode-map (kbd "C-t") 'neotree-toggle)
                      (evil-define-key 'normal neotree-mode-map (kbd "C-m") 'neotree-enter)
@@ -398,12 +401,14 @@
     (message "[eshell] Buffer control is disabled")))
 
 (defun split ()
-  (interactive)
-  (split-window-horizontally))
-
-(defun vsplit ()
+  "Vim like key bindings for window splitting."
   (interactive)
   (split-window-vertically))
+
+(defun vsplit ()
+  "Vim like key bindings for window splitting."
+  (interactive)
+  (split-window-horizontally))
 
 (defun copy-to-clipboard (text)
   "Copy selected TEXT into the GUI's clipboard."
